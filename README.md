@@ -112,3 +112,6 @@ authoring environment), so treat it as a 90% starting point:
 - [~] Step 5 — Geofence + dwell prompt scaffolded; flip
       `Session.BackgroundReportingEnabled` and request background permission
 - [ ] Step 6 — Map view, day-3 background soft ask, "this place is missing" flow
+
+## AI-Assisted Development
+AI-assisted development: The initial QuietSpot codebase was generated collaboratively with Anthropic's Claude while exploring AI-assisted software development. The concept, requirements, product decisions, and ongoing development are by Kris Bethea.
