@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:QuietSpot.App.ViewModels"
+             xmlns:conv="clr-namespace:QuietSpot.App.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="QuietSpot.App.Views.VenueDetailPage"
+             x:DataType="vm:VenueDetailViewModel"
+             Title="{Binding Venue.Name}">
+
+    <ContentPage.Resources>
+        <conv:StatusColorConverter x:Key="StatusColor" />
+        <conv:FavoriteGlyphConverter x:Key="FavoriteGlyph" />
+        <toolkit:IsNotNullConverter x:Key="IsNotNullConverter" />
+        <toolkit:InvertedBoolConverter x:Key="InvertedBool" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="{Binding Venue.Name}" Style="{StaticResource TitleLabel}" />
+                    <Label Text="{Binding Venue.Category}" Style="{StaticResource MutedLabel}" />
+                </VerticalStackLayout>
+                <Button Grid.Column="1"
+                        Text="{Binding IsFavorite, Converter={StaticResource FavoriteGlyph}}"
+                        Command="{Binding ToggleFavoriteCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource Primary}"
+                        FontSize="22"
+                        Padding="8"
+                        VerticalOptions="Start" />
+            </Grid>
+
+            <!-- Current status banner -->
+            <Border BackgroundColor="{Binding Venue.StatusLabel, Converter={StaticResource StatusColor}, ConverterParameter=bg}"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="12,10">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="{Binding Venue.StatusLabel}"
+                           FontAttributes="Bold"
+                           TextColor="{Binding Venue.StatusLabel, Converter={StaticResource StatusColor}, ConverterParameter=fg}" />
+                    <Label FontSize="12"
+                           Text="{Binding Venue.RecentReportCount, StringFormat='{0} reports in the last 90 min'}"
+                           TextColor="{Binding Venue.StatusLabel, Converter={StaticResource StatusColor}, ConverterParameter=fg}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Typical busyness today -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Typical busyness today" Style="{StaticResource MutedLabel}" />
+                    <HorizontalStackLayout BindableLayout.ItemsSource="{Binding TodayBars}"
+                                           Spacing="4" HeightRequest="76" VerticalOptions="End">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:HourBar">
+                                <VerticalStackLayout Spacing="3" VerticalOptions="End" WidthRequest="18">
+                                    <BoxView HeightRequest="{Binding BarHeight}"
+                                             Color="{Binding BarColor}"
+                                             CornerRadius="2"
+                                             VerticalOptions="End" />
+                                    <Label Text="{Binding HourLabel}"
+                                           FontSize="10"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="Center"
+                                           IsVisible="{Binding ShowLabel}" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Attribute chips -->
+            <FlexLayout BindableLayout.ItemsSource="{Binding AttributeChips}"
+                        Wrap="Wrap" JustifyContent="Start">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Border BackgroundColor="Transparent"
+                                Stroke="{StaticResource Border}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 999"
+                                Padding="10,4" Margin="0,0,6,6">
+                            <Label Text="{Binding .}" FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}" />
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+
+            <!-- One-tap report -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Here now? How busy is it?" Style="{StaticResource MutedLabel}"
+                           IsVisible="{Binding HasReported, Converter={StaticResource InvertedBool}}" />
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8"
+                          IsVisible="{Binding HasReported, Converter={StaticResource InvertedBool}}">
+                        <Button Grid.Column="0" Text="Quiet"
+                                Style="{StaticResource SecondaryButton}"
+                                Command="{Binding ReportQuietCommand}" />
+                        <Button Grid.Column="1" Text="Some"
+                                Style="{StaticResource SecondaryButton}"
+                                Command="{Binding ReportSomeCommand}" />
+                        <Button Grid.Column="2" Text="Packed"
+                                Style="{StaticResource SecondaryButton}"
+                                Command="{Binding ReportPackedCommand}" />
+                    </Grid>
+                    <Label Text="{Binding ConfirmationText}"
+                           TextColor="{StaticResource QuietColor}"
+                           IsVisible="{Binding ConfirmationText, Converter={StaticResource IsNotNullConverter}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                               Color="{StaticResource Primary}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:QuietSpot.App.ViewModels"
+             xmlns:dto="clr-namespace:QuietSpot.Shared.Dtos;assembly=QuietSpot.Shared"
+             xmlns:conv="clr-namespace:QuietSpot.App.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="QuietSpot.App.Views.FeedPage"
+             x:DataType="vm:FeedViewModel"
+             Title="QuietSpot"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <conv:StatusColorConverter x:Key="StatusColor" />
+        <toolkit:IsNotNullConverter x:Key="IsNotNullConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*" Padding="16,8">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="2" Margin="4,8,4,12">
+            <Label Text="Quiet near you" Style="{StaticResource TitleLabel}" />
+            <Label Text="{Binding AreaLabel, StringFormat='{0} · sorted by quietness'}"
+                   Style="{StaticResource MutedLabel}" />
+            <Label Text="{Binding ErrorMessage}"
+                   Style="{StaticResource MutedLabel}"
+                   TextColor="{StaticResource PackedColor}"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}" />
+        </VerticalStackLayout>
+
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding Venues}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dto:VenueSummaryDto">
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding OpenVenueCommand, Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding Name}"
+                                       FontAttributes="Bold" FontSize="16" />
+
+                                <Border Grid.Row="0" Grid.Column="1"
+                                        BackgroundColor="{Binding StatusLabel, Converter={StaticResource StatusColor}, ConverterParameter=bg}"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 999"
+                                        Padding="10,3"
+                                        VerticalOptions="Start">
+                                    <Label Text="{Binding StatusLabel}"
+                                           FontSize="12"
+                                           TextColor="{Binding StatusLabel, Converter={StaticResource StatusColor}, ConverterParameter=fg}" />
+                                </Border>
+
+                                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="4">
+                                    <Label Text="{Binding DistanceMeters, StringFormat='{0:F0} m'}"
+                                           Style="{StaticResource MutedLabel}" />
+                                    <Label Text="·" Style="{StaticResource MutedLabel}"
+                                           IsVisible="{Binding LastReportMinutesAgo, Converter={StaticResource IsNotNullConverter}}" />
+                                    <Label Text="{Binding LastReportMinutesAgo, StringFormat='reported {0} min ago'}"
+                                           Style="{StaticResource MutedLabel}"
+                                           IsVisible="{Binding LastReportMinutesAgo, Converter={StaticResource IsNotNullConverter}}" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" Spacing="6" Padding="24">
+                        <Label Text="Nothing nearby yet"
+                               HorizontalOptions="Center" FontAttributes="Bold" />
+                        <Label Text="Pull down to refresh, or check that the API is running."
+                               Style="{StaticResource MutedLabel}" HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator Grid.Row="1"
+                           IsRunning="{Binding IsLoading}"
+                           IsVisible="{Binding IsLoading}"
+                           Color="{StaticResource Primary}"
+                           VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

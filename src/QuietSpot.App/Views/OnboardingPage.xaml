@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:QuietSpot.App.ViewModels"
+             x:Class="QuietSpot.App.Views.OnboardingPage"
+             x:DataType="vm:OnboardingViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <Grid Padding="28" RowDefinitions="*,Auto,*">
+
+        <!-- Step 0: Welcome — one screen, one promise -->
+        <VerticalStackLayout Grid.Row="1" Spacing="14" IsVisible="{Binding Step, Converter={StaticResource IsStepZero}}">
+            <Label Text="Find quiet places, right now"
+                   Style="{StaticResource TitleLabel}"
+                   HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+            <Label Text="Real people quietly report how busy cafés, gyms, and libraries are — so you can go when it's calm."
+                   Style="{StaticResource MutedLabel}" FontSize="15"
+                   HorizontalTextAlignment="Center" />
+            <Button Text="Show me what's quiet nearby"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding NextCommand}"
+                    Margin="0,12,0,0" />
+            <Label Text="No account needed to look around"
+                   Style="{StaticResource MutedLabel}" FontSize="12"
+                   HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <!-- Step 1: Location soft ask, BEFORE the OS dialog -->
+        <VerticalStackLayout Grid.Row="1" Spacing="14" IsVisible="{Binding Step, Converter={StaticResource IsStepOne}}">
+            <Label Text="Where should we look?"
+                   Style="{StaticResource TitleLabel}"
+                   HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+            <Label Text="We use your location only while you're in the app, to sort nearby places. It never leaves your phone unless you choose to report."
+                   Style="{StaticResource MutedLabel}" FontSize="15"
+                   HorizontalTextAlignment="Center" />
+            <Button Text="Use my location"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding UseMyLocationCommand}"
+                    Margin="0,12,0,0" />
+            <Button Text="Browse a neighborhood instead"
+                    Style="{StaticResource SecondaryButton}"
+                    Command="{Binding BrowseInsteadCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

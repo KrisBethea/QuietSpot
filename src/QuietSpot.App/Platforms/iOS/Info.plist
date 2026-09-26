@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+	</array>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/appicon.appiconset</string>
+
+	<!-- These strings ARE your privacy promise — App Review reads them. -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>QuietSpot uses your location only to sort nearby places by how quiet they are. It never leaves your phone unless you choose to report.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>With background access, QuietSpot can gently ask how busy a place is after you've been there a while — at most a few times a day. You can turn this off anytime.</string>
+
+	<!-- Required for geofence wake-ups when the app is not running -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
+
+	<!-- Dev convenience: the local API is plain http. Remove for production. -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+</dict>
+</plist>
